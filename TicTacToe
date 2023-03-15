@@ -1,0 +1,61 @@
+import pygame
+
+# Inicializar pygame
+pygame.init()
+
+# Definir constantes
+SCREEN_SIZE = (300, 300)
+CELL_SIZE = SCREEN_SIZE[0] // 3
+CELL_PADDING = CELL_SIZE // 6
+LINE_WIDTH = 10
+CIRCLE_RADIUS = CELL_SIZE // 2 - CELL_PADDING
+CROSS_PADDING = CELL_PADDING * 2
+
+# Definir colores
+BG_COLOR = (255, 255, 255)
+LINE_COLOR = (0, 0, 0)
+CIRCLE_COLOR = (255, 0, 0)
+CROSS_COLOR = (0, 0, 255)
+
+# Crear la ventana
+screen = pygame.display.set_mode(SCREEN_SIZE)
+pygame.display.set_caption("Tres en raya")
+
+# Definir el tablero
+board = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
+
+# Dibujar el tablero vacío
+def draw_board():
+    screen.fill(BG_COLOR)
+    # Dibujar las líneas verticales
+    pygame.draw.line(screen, LINE_COLOR, (CELL_SIZE, 0), (CELL_SIZE, SCREEN_SIZE[1]), LINE_WIDTH)
+    pygame.draw.line(screen, LINE_COLOR, (CELL_SIZE * 2, 0), (CELL_SIZE * 2, SCREEN_SIZE[1]), LINE_WIDTH)
+    # Dibujar las líneas horizontales
+    pygame.draw.line(screen, LINE_COLOR, (0, CELL_SIZE), (SCREEN_SIZE[0], CELL_SIZE), LINE_WIDTH)
+    pygame.draw.line(screen, LINE_COLOR, (0, CELL_SIZE * 2), (SCREEN_SIZE[0], CELL_SIZE * 2), LINE_WIDTH)
+    # Dibujar los círculos y cruces
+    for row in range(3):
+        for col in range(3):
+            if board[row][col] == "O":
+                pygame.draw.circle(screen, CIRCLE_COLOR, (col * CELL_SIZE + CELL_SIZE // 2, row * CELL_SIZE + CELL_SIZE // 2), CIRCLE_RADIUS)
+            elif board[row][col] == "X":
+                # Dibujar la cruz
+                pygame.draw.line(screen, CROSS_COLOR, (col * CELL_SIZE + CROSS_PADDING, row * CELL_SIZE + CELL_SIZE - CROSS_PADDING), (col * CELL_SIZE + CELL_SIZE - CROSS_PADDING, row * CELL_SIZE + CROSS_PADDING), LINE_WIDTH)
+                pygame.draw.line(screen, CROSS_COLOR, (col * CELL_SIZE + CROSS_PADDING, row * CELL_SIZE + CROSS_PADDING), (col * CELL_SIZE + CELL_SIZE - CROSS_PADDING, row * CELL_SIZE + CELL_SIZE - CROSS_PADDING), LINE_WIDTH)
+
+# Actualizar la pantalla
+def update_screen():
+    pygame.display.update()
+
+# Esperar a que el usuario cierre la ventana
+def wait_for_exit():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+# Ejecutar el juego
+draw_board()
+update_screen()
+wait_for_exit()
