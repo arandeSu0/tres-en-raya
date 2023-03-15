@@ -1,0 +1,107 @@
+import pygame
+
+# Inicializa Pygame
+pygame.init()
+
+# Configura la ventana del juego
+size = (300, 300)
+screen = pygame.display.set_mode(size)
+pygame.display.set_caption("Tres en Raya")
+
+# Colores
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+
+CELL_SIZE = 100  # Tamaño de cada casilla del tablero en píxeles
+CELL_PADDING = 10  # Espacio entre cada casilla del tablero en píxeles
+LINE_WIDTH = 6  # Ancho de la línea para dibujar las fichas
+
+# Variables del juego
+player = 1
+board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+# Dibuja el tablero vacío
+def draw_board():
+    screen.fill(WHITE)
+    pygame.draw.line(screen, BLACK, (100, 0), (100, 300), 2)
+    pygame.draw.line(screen, BLACK, (200, 0), (200, 300), 2)
+    pygame.draw.line(screen, BLACK, (0, 100), (300, 100), 2)
+    pygame.draw.line(screen, BLACK, (0, 200), (300, 200), 2)
+
+# Dibuja las fichas en el tablero
+def draw_piece(row, col, player):
+    """
+    Dibuja una ficha en la casilla correspondiente del tablero.
+
+    Args:
+        row (int): número de fila de la casilla.
+        col (int): número de columna de la casilla.
+        player (int): número de jugador (1 o 2).
+    """
+    # Calcula las coordenadas de la casilla en la pantalla
+    x = col * CELL_SIZE + CELL_PADDING
+    y = row * CELL_SIZE + CELL_PADDING
+
+    # Dibuja una cruz si el jugador es 1, o un círculo si el jugador es 2
+    if player == 1:
+        pygame.draw.line(screen, RED, (x, y), (x + CELL_SIZE - 2 * CELL_PADDING, y + CELL_SIZE - 2 * CELL_PADDING), LINE_WIDTH)
+        pygame.draw.line(screen, RED, (x, y + CELL_SIZE - 2 * CELL_PADDING), (x + CELL_SIZE - 2 * CELL_PADDING, y), LINE_WIDTH)
+    elif player == 2:
+        pygame.draw.circle(screen, BLUE, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 2 - CELL_PADDING, LINE_WIDTH)
+    print(f"Dibujando ficha en posición {x}, {y}")
+
+# Verifica si un jugador ha ganado
+def check_win(player):
+    # Comprueba las filas
+    for row in range(3):
+        if board[row][0] == player and board[row][1] == player and board[row][2] == player:
+            return True
+
+    # Comprueba las columnas
+    for col in range(3):
+        if board[0][col] == player and board[1][col] == player and board[2][col] == player:
+            return True
+
+    # Comprueba las diagonales
+    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+        return True
+    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
+        return True
+
+    # Si no hay ganador
+    return False
+
+# Bucle principal del juego
+done = False
+
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Obtiene la posición del clic del mouse
+            pos = pygame.mouse.get_pos()
+            row = pos[1] // 100
+            col = pos[0] // 100
+
+            # Si la casilla está vacía, coloca una ficha
+            if board[row][col] == 0:
+                board[row][col] = player
+                draw_piece(row, col, player)
+
+                # Si un jugador ha ganado, termina el juego
+                if check_win(player):
+                    print("¡Jugador " + str(player) + " ha ganado!")
+                    done = True
+
+                # Si no hay ganador, cambia al siguiente jugador
+                player = 3 - player
+
+    # Dibuja el tablero y actualiza la pantalla
+    draw_board()
+    pygame.display.flip()
+
+# Sale del juego
+pygame.quit()
